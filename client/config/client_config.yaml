@@ -1,0 +1,12 @@
+proxy:
+  type: socks5
+  listen_host: "127.0.0.1"
+  listen_port: 1080
+
+tunnel:
+  remote_host: "0.0.0.0"
+  remote_port: 8443
+
+#auth:
+#  socks5_user: ragga
+#  socks5_pass: ragga
