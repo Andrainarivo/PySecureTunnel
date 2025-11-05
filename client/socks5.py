@@ -1,5 +1,4 @@
 import socket
-from ssl import SSL_ERROR_SSL, SSL_ERROR_EOF
 import threading
 
 from tunnel import TLSClientTunnel
@@ -67,8 +66,8 @@ class Socks5ProxyHandler(threading.Thread):
                 tls_sock.sendall(target_line)
                 self._relay(self.client_sock, tls_sock)               
 
-        except SSL_ERROR_SLL or SSL_ERROR_EOF as e:
-            print(f"[Error] : {e}")
+        except Exception as e:
+            pass
         finally:
             self.client_sock.close()
 

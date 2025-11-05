@@ -1,6 +1,5 @@
 import socket
 import threading
-from ssl import SSL_ERROR_SSL, SSL_ERROR_EOF
 
 
 class ForwardingHandler(threading.Thread):
@@ -36,8 +35,8 @@ class ForwardingHandler(threading.Thread):
             # Relais bidirectionnel
             self._relay(self.client_sock, target_sock)
 
-        except SSL_EEROR_SSL or SSL_ERROR_EOF as e:
-            print(f"[ERROR] : {e}")
+        except Exception as e:
+            pass
         finally:
             try:
                 self.client_sock.close()
