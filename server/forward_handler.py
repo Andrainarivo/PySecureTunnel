@@ -1,5 +1,8 @@
 import socket
 import threading
+from utils.logger import get_logger
+
+logger = get_logger("SERVER") 
 
 
 class ForwardingHandler(threading.Thread):
@@ -16,20 +19,20 @@ class ForwardingHandler(threading.Thread):
             # Lire la ligne cible + garder ce qui suit dans le buffer
             target_line, leftover = self._recv_until_newline(self.client_sock)
             if not target_line:
-                print("[Server] Erreur : aucune adresse cible reçue.")
+                logger.debug("Erreur : aucune adresse cible reçue.")
                 self.client_sock.close()
                 return
 
             target_host, target_port = self._parse_target(target_line)
-            print(f"[Server] Connexion vers {target_host}:{target_port}")
+            logger.info(f"Requête de connexion vers {target_host}:{target_port}")
 
             # Connexion réelle vers la cible
             target_sock = socket.create_connection((target_host, target_port))
-            print("[Server] Connexion établie avec la cible")
+            logger.info("Connexion établie")
 
             # Si des données de la requête sont déjà arrivées, on les forward immédiatement
             if leftover:
-                print(f"[Server] Données leftover à forward : {leftover}")
+                logger.info(f"Données leftover à forward : {leftover}")
                 target_sock.sendall(leftover)
 
             # Relais bidirectionnel

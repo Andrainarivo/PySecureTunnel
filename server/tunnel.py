@@ -6,9 +6,11 @@ import os
 from dotenv import load_dotenv
 
 from forward_handler import ForwardingHandler
+from utils.logger import get_logger
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, "config", ".env"))
+logger = get_logger("SERVER")
 
 class TLSServerTunnel:
     """
@@ -47,17 +49,17 @@ class TLSServerTunnel:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.bind((host, port))
             sock.listen(5)
-            print(f"[Server] En écoute sur {host}:{port}")
+            logger.info(f"En écoute sur {host}:{port}")
 
             while True:
                 client_sock, addr = sock.accept()
-                print(f"[Server] Connexion entrante de {addr}")
+                logger.info(f"Connexion entrante depuis {addr}")
 
                 try:
                     tls_conn = context.wrap_socket(client_sock, server_side=True)
                     handler = ForwardingHandler(tls_conn)
                     handler.start()
                 except ssl.SSLError as e:
-                    print(f"[Server] Erreur SSL : {e}")
+                    logger.error(f"Erreur SSL : {e}")
                 except Exception as e:
-                    print(f"[Server] Erreur {e}")
+                    logger.error(f"Erreur {e}")

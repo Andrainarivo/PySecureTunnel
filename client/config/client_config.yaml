@@ -6,7 +6,3 @@ proxy:
 tunnel:
   remote_host: "0.0.0.0"
   remote_port: 8443
-
-#auth:
-#  socks5_user: ragga
-#  socks5_pass: ragga

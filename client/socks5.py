@@ -3,7 +3,9 @@ import threading
 
 from tunnel import TLSClientTunnel
 from config import ClientConfig
+from utils.logger import get_logger
 
+logger = get_logger("SOCKS5")
 
 class Socks5ProxyHandler(threading.Thread):
     """
@@ -22,7 +24,7 @@ class Socks5ProxyHandler(threading.Thread):
 
     def run(self):
         try:
-            print(f"[SOCKS5] Nouvelle connexion depuis {self.client_addr}")
+            logger.info(f"Nouvelle connexion depuis {self.client_addr}")
 
             # === Étape 1 : handshake SOCKS5 ===
             version, nmethods = self.client_sock.recv(2)
@@ -32,7 +34,7 @@ class Socks5ProxyHandler(threading.Thread):
             # === Étape 2 : demande de connexion ===
             data = self.client_sock.recv(4)
             if len(data) < 4 or data[0] != 5 or data[1] != 1:
-                print("[SOCKS5] Requête non supportée")
+                logger.error("Requête non supportée")
                 self.client_sock.close()
                 return
 
@@ -45,13 +47,13 @@ class Socks5ProxyHandler(threading.Thread):
             elif atyp == 4:  # IPv6
                 addr = socket.inet_ntop(socket.AF_INET6, self.client_sock.recv(16))
             else:
-                print("[SOCKS5] Type d'adresse non supporté")
+                logger.error("Type d'adresse non supporté")
                 self.client_sock.close()
                 return
 
             port_bytes = self.client_sock.recv(2)
             port = int.from_bytes(port_bytes, "big")
-            print(f"[SOCKS5] Requête de connexion vers {addr}:{port}")
+            logger.info(f"Requête de connexion vers {addr}:{port}")
 
             # === Étape 3 : réponse OK au client SOCKS5 ===
             self.client_sock.sendall(b"\x05\x00\x00\x01" + b"\x00" * 6)  # connexion acceptée
