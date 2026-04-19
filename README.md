@@ -1,10 +1,8 @@
 ## 🛡️ PySecureTunnel
 
-### Local SOCKS5 Proxy → mTLS Tunnel → Remote Server → TCP Target
-
 PySecureTunnel is a lightweight, secure, end-to-end encrypted tunneling system that:
 
-- exposes a local SOCKS5 proxy,
+- exposes a local/remote SOCKS5 proxy,
 - encapsulates all traffic in a mutually authenticated TLS tunnel,
 - forwards decrypted data to a remote server,
 - which connects to the final TCP service.
@@ -16,14 +14,14 @@ It acts as a micro-VPN, but with:
 + fully user-space,
 + per-application control.
 
-## ✨ Features (Current Version)
-### ✔️ SOCKS5 Local Proxy
+## Features
+### SOCKS5 Proxy Endpoint
 
 - Full SOCKS5 handshake (no authentication yet)
 - Domain, IPv4, IPv6 support
 - Multi-threaded client handling
 
-### ✔️ Encrypted Tunnel (mTLS)
+### Encrypted Tunnel (mTLS)
 
 + Mutual TLS authentication
 
@@ -33,7 +31,7 @@ It acts as a micro-VPN, but with:
 
 + Encrypted forwarding channel
 
-### ✔️ Remote Server Forwarder
+### Remote Server Forwarder
 
 * Receives decrypted tunnel traffic
 
@@ -43,22 +41,21 @@ It acts as a micro-VPN, but with:
 
 * Full duplex bidirectional forwarding
 
-### ✔️ Unified Configuration Layer
+### Unified Configuration Layer
 
 - YAML configuration files
 
 - .env for sensitive paths
 
-- Automatic merge via ConfigLoader
 
-## 🔧 Installation
+## Installation
 
 ### Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 🔐 Certificate Generation (OpenSSL or certs.py)
+### Certificate Generation (OpenSSL or certs.py)
 
 #### OpenSSL
 
@@ -101,7 +98,7 @@ client/certs/client.pem
 ```
 
 
-## ⚙️ Configuration
+## Configuration (for local)
 
 #### **Client**: `client/config/client_config.yaml`
 ```yaml
@@ -122,7 +119,7 @@ listen_port: 8443
 ```
 
 
-##  ▶️ Running the System
+## Running the System
 
 #### **Start the server**
 ```bash
@@ -130,18 +127,21 @@ cd server
 python main.py
 ```
 
-#### **Start the client (local SOCKS5)**
+#### **Start the client**
 ```bash
 cd client
 python main.py
 ```
 
-#### **Test through the tunnel**
+### Basic Test : **Test HTTP request through the tunnel**
+
+#### Remote target
+
 ```bash
 curl -x socks5h://127.0.0.1:1080 http://example.com
 ```
 
-### 🧪 Basic Test
+#### Local target
 
 Start a HTTP test server:
 ```bash
@@ -155,24 +155,19 @@ curl -x socks5h://127.0.0.1:1080 http://127.0.0.1:8080
 
 ## Security Notes
 
-#### Current version:
-
 - mTLS enforced
 
-- Local SOCKS5 only
+- Proxy SOCKS5 only
 
 - No user authentication yet
 
-- No WAN exposure by default
 
-- No routing manipulation
+## Improvements:
 
-#### Roadmap (future):
+- SOCKS5 username/password option
 
-- SOCKS5 username/password
+- TLS only option
 
-- Option to disable client cert auth (TLS only)
-
-- Traffic integrity checks (SYN/FIN log, packet stats)
+- Traffic integrity checks (SYN, ACK, FIN, ...)
 
 - Auto health-check on tunnel startup
